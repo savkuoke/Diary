@@ -60,7 +60,15 @@ export default function Home() {
       set.add(formatMonthKey(d))
     }
 
-    return Array.from(set).sort().reverse()
+    const arr = Array.from(set).sort().reverse()
+    // ensure current month appears first so the selector points to this month by default
+    const currentKey = formatMonthKey(new Date())
+    const idx = arr.indexOf(currentKey)
+    if (idx > -1) {
+      arr.splice(idx, 1)
+      arr.unshift(currentKey)
+    }
+    return arr
   }, [entries])
 
   // Initialize selectedMonth from the derived `months` array so server and client
@@ -87,13 +95,6 @@ export default function Home() {
   const [selectedWeekStart, setSelectedWeekStart] = useState(null)
   useEffect(() => { if (weeks.length) setSelectedWeekStart(weeks[0]) }, [weeks])
 
-  // compute total steps for the selected week
-  const totalStepsForWeek = useMemo(() => {
-    if (!selectedWeekStart) return 0
-    const weekEntries = entriesByWeek.get(selectedWeekStart.toISOString()) || []
-    return weekEntries.reduce((sum, e) => sum + (Number(e.steps) || 0), 0)
-  }, [selectedWeekStart, entriesByWeek])
-
   // group entries by week start
   const entriesByWeek = useMemo(() => {
     const map = new Map()
@@ -106,6 +107,13 @@ export default function Home() {
     })
     return map
   }, [entries])
+
+  // compute total steps for the selected week
+  const totalStepsForWeek = useMemo(() => {
+    if (!selectedWeekStart) return 0
+    const weekEntries = entriesByWeek.get(selectedWeekStart.toISOString()) || []
+    return weekEntries.reduce((sum, e) => sum + (Number(e.steps) || 0), 0)
+  }, [selectedWeekStart, entriesByWeek])
 
   // map entries by date key YYYY-MM-DD for month grid markers
   const entriesByDate = useMemo(() => {
