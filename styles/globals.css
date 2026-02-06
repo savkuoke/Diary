@@ -3,9 +3,10 @@
 	--axis-1: #f59e0b; /* yellow/amber */
 	--axis-2: #fb923c; /* orange */
 	--axis-3: #10b981; /* green */
+		--axis-3-dark: #065f46; /* dark green for active week */
 	--axis-4: #a0522d; /* brown */
 
-	--bg: #fffaf0; /* warm off-white */
+		--bg: #ecfdf5; /* light green background */
 	--card: #ffffff;
 	--muted: #6b4f36; /* muted brownish */
 	--accent: var(--axis-2);
@@ -21,7 +22,7 @@ body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Ro
 .month-nav button { padding:6px 10px; border-radius:6px; border:1px solid #fde3c6; background:white; cursor:pointer }
 .week-list { display:flex; gap:8px; overflow:auto; padding:8px 0 }
 .week { padding:8px 12px; border-radius:8px; border:1px solid transparent; background:transparent; cursor:pointer; color:var(--muted) }
-.week.active { background:linear-gradient(90deg,var(--axis-2),var(--axis-3)); color:white; box-shadow:0 6px 18px rgba(251,146,60,0.12) }
+.week.active { background: var(--axis-3-dark); color: white; box-shadow:0 6px 18px rgba(6,95,70,0.12) }
 
 .main-grid { display:grid; grid-template-columns: 320px 1fr; gap:20px }
 .card { background:var(--card); border-radius:10px; padding:12px; box-shadow:0 1px 3px rgba(15,23,42,0.04); border:1px solid rgba(15,23,42,0.03) }
