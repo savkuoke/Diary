@@ -22,20 +22,16 @@ export default function CalendarHeader({ months, selectedMonth, setSelectedMonth
         {/* quick-jump buttons removed per user request */}
 
         <div className="week-list" style={{alignItems:'center'}}>
-            <div style={{display:'flex', gap:8, alignItems:'center'}}>
-              <button className={viewMode==='week'?'btn tiny primary':'btn tiny'} onClick={()=>setViewMode('week')}>Week</button>
-              <button className={viewMode==='month'?'btn tiny primary':'btn tiny'} onClick={()=>setViewMode('month')}>Month</button>
+          {viewMode === 'week' && (
+            <div style={{display:'flex', gap:8, overflow:'auto'}}>
+              {weeks.map(w => (
+                <button key={w.toISOString()} className={selectedWeekStart && selectedWeekStart.toISOString() === w.toISOString() ? 'week active' : 'week'} onClick={()=>setSelectedWeekStart(w)}>
+                  {w.toLocaleDateString()}
+                </button>
+              ))}
             </div>
-            {viewMode === 'week' && (
-              <div style={{display:'flex', gap:8, overflow:'auto'}}>
-                {weeks.map(w => (
-                  <button key={w.toISOString()} className={selectedWeekStart && selectedWeekStart.toISOString() === w.toISOString() ? 'week active' : 'week'} onClick={()=>setSelectedWeekStart(w)}>
-                    {w.toLocaleDateString()}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          )}
+        </div>
       </div>
     </header>
   )

@@ -11,7 +11,9 @@ describe('CalendarHeader component', () => {
     const noop = () => {}
     render(<CalendarHeader months={months} selectedMonth={months[0]} setSelectedMonth={noop} viewMode={'week'} setViewMode={noop} weeks={[]} selectedWeekStart={null} setSelectedWeekStart={noop} />)
     expect(screen.getByText('Lifestyle Diary')).toBeInTheDocument()
-    expect(screen.getByText('Week')).toBeInTheDocument()
-    expect(screen.getByText('Month')).toBeInTheDocument()
+    // Ensure the select and nav arrows render instead of explicit Week/Month buttons
+    expect(screen.getByRole('combobox')).toBeInTheDocument()
+    expect(screen.getByText('◀')).toBeInTheDocument()
+    expect(screen.getByText('▶')).toBeInTheDocument()
   })
 })
