@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatMonthKey, startOfWeek } from '../lib/utils.js'
 
 export default function CalendarHeader({ months, selectedMonth, setSelectedMonth, viewMode, setViewMode, weeks, selectedWeekStart, setSelectedWeekStart }){
   return (
@@ -17,6 +18,11 @@ export default function CalendarHeader({ months, selectedMonth, setSelectedMonth
             const idx = months.indexOf(selectedMonth)
             if (idx > 0) setSelectedMonth(months[idx - 1])
           }}>{'▶'}</button>
+        </div>
+
+        <div style={{display:'flex', gap:8, marginLeft:12, alignItems:'center'}}>
+          <button className="btn tiny" onClick={() => { setSelectedMonth(formatMonthKey(new Date())); setViewMode('month') }}>This Month</button>
+          <button className="btn tiny" onClick={() => { setSelectedWeekStart(startOfWeek(new Date())); setViewMode('week') }}>This Week</button>
         </div>
 
         <div className="week-list" style={{alignItems:'center'}}>
