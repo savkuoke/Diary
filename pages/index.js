@@ -63,7 +63,9 @@ export default function Home() {
     return Array.from(set).sort().reverse()
   }, [entries])
 
-  const [selectedMonth, setSelectedMonth] = useState(() => (typeof window !== 'undefined' ? (months[0] || formatMonthKey(new Date())) : formatMonthKey(new Date())))
+  // Initialize selectedMonth from the derived `months` array so server and client
+  // render the same initial value and avoid hydration mismatches.
+  const [selectedMonth, setSelectedMonth] = useState(() => months[0] || formatMonthKey(new Date()))
   useEffect(() => { if (months.length && !months.includes(selectedMonth)) setSelectedMonth(months[0]) }, [months])
 
   // compute weeks for the selected month
@@ -84,6 +86,13 @@ export default function Home() {
 
   const [selectedWeekStart, setSelectedWeekStart] = useState(null)
   useEffect(() => { if (weeks.length) setSelectedWeekStart(weeks[0]) }, [weeks])
+
+  // compute total steps for the selected week
+  const totalStepsForWeek = useMemo(() => {
+    if (!selectedWeekStart) return 0
+    const weekEntries = entriesByWeek.get(selectedWeekStart.toISOString()) || []
+    return weekEntries.reduce((sum, e) => sum + (Number(e.steps) || 0), 0)
+  }, [selectedWeekStart, entriesByWeek])
 
   // group entries by week start
   const entriesByWeek = useMemo(() => {
@@ -145,7 +154,9 @@ export default function Home() {
         <section className="right">
           <h2>{viewMode === 'week' ? 'Week markings' : 'Month view'}</h2>
           {viewMode === 'week' ? (
-            <div className="entries-grid">
+            <div>
+              <div style={{marginBottom:8}} className="card small">Total steps this week: <strong>{totalStepsForWeek}</strong></div>
+              <div className="entries-grid">
               {selectedWeekStart ? (
                 (entriesByWeek.get(selectedWeekStart.toISOString()) || []).length ? (
                   (entriesByWeek.get(selectedWeekStart.toISOString()) || []).map(entry => (
@@ -168,6 +179,7 @@ export default function Home() {
               ) : (
                 <div className="card empty">Select a week</div>
               )}
+            </div>
             </div>
           ) : (
             <div className="card month-card">
