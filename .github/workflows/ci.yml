@@ -21,3 +21,10 @@ jobs:
         run: npm test
       - name: Run unit tests (Vitest)
         run: npm run test:unit -- --run
+      - name: Run unit tests with coverage
+        run: npm run coverage -- --run
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
