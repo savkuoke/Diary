@@ -8,14 +8,29 @@
     "notes": "I dunno"
   },
   {
+    "id": "1770430000001",
+    "date": "2026-02-08",
+    "weight": "69.5",
+    "steps": "7500",
+    "mood": "good",
+    "notes": "Sunday walk"
+  },
+  {
+    "id": "1770430000002",
+    "date": "2026-02-07",
+    "weight": "69.7",
+    "steps": "5000",
+    "mood": "ok",
+    "notes": "Today entry"
+  },
+  {
     "id": "1770416227261",
     "date": "2026-02-07",
     "weight": "70",
     "steps": "5000",
     "mood": "ok",
     "notes": "smoke test"
-  }
-  ,
+  },
   {
     "id": "1770416000001",
     "date": "2026-01-26",
@@ -37,7 +52,7 @@
     "date": "2026-02-02",
     "weight": "70",
     "steps": "7000",
-    "mood": "energetic",
+    "mood": "energetic and fine",
     "notes": "this week start"
   },
   {
@@ -63,5 +78,22 @@
     "steps": "10000",
     "mood": "great",
     "notes": "saturday"
+  }
+  ,
+  {
+    "id": "1770429000001",
+    "date": "2026-01-31",
+    "weight": "71.2",
+    "steps": "5200",
+    "mood": "ok",
+    "notes": "End of prev week"
+  },
+  {
+    "id": "1770429000002",
+    "date": "2026-01-29",
+    "weight": "71",
+    "steps": "6300",
+    "mood": "okay",
+    "notes": "Mid prev week"
   }
 ]
