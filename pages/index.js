@@ -1,37 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
+import CalendarHeader from '../components/CalendarHeader.jsx'
 
 const fetcher = (url) => fetch(url).then((r) => r.json())
-
-function formatMonthKey(d) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-}
-
-function monthLabel(key) {
-  const [y, m] = key.split('-').map(Number)
-  return new Date(y, m - 1).toLocaleString(undefined, { month: 'long', year: 'numeric' })
-}
-
-function startOfWeek(date) {
-  // Monday-based week start
-  const d = new Date(date)
-  const day = d.getDay() // 0 Sun .. 6 Sat
-  const diff = (day + 6) % 7 // days since Monday
-  d.setDate(d.getDate() - diff)
-  d.setHours(0, 0, 0, 0)
-  return d
-}
-
-function addDays(d, n) {
-  const x = new Date(d)
-  x.setDate(x.getDate() + n)
-  return x
-}
-
-function weekLabel(start) {
-  const end = addDays(start, 6)
-  return `${start.toLocaleDateString()} — ${end.toLocaleDateString()}`
-}
+import { formatMonthKey, monthLabel, startOfWeek, addDays, weekLabel } from '../lib/utils.js'
 
 export default function Home() {
   const { data: entries = [], mutate } = useSWR('/api/entries', fetcher)
@@ -123,40 +95,17 @@ export default function Home() {
 
   return (
     <div className="container">
-      <header className="header">
-        <h1>Lifestyle Diary</h1>
-        <div className="selectors">
-          <div className="month-nav">
-            <button onClick={() => {
-              const idx = months.indexOf(selectedMonth)
-              if (idx < months.length - 1) setSelectedMonth(months[idx + 1])
-            }}>{'◀'}</button>
-            <select value={selectedMonth} onChange={(e)=>setSelectedMonth(e.target.value)}>
-              {months.map(m => <option key={m} value={m}>{monthLabel(m)}</option>)}
-            </select>
-            <button onClick={() => {
-              const idx = months.indexOf(selectedMonth)
-              if (idx > 0) setSelectedMonth(months[idx - 1])
-            }}>{'▶'}</button>
-          </div>
-
-          <div className="week-list" style={{alignItems:'center'}}>
-              <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                <button className={viewMode==='week'?'btn tiny primary':'btn tiny'} onClick={()=>setViewMode('week')}>Week</button>
-                <button className={viewMode==='month'?'btn tiny primary':'btn tiny'} onClick={()=>setViewMode('month')}>Month</button>
-              </div>
-              {viewMode === 'week' && (
-                <div style={{display:'flex', gap:8, overflow:'auto'}}>
-                  {weeks.map(w => (
-                    <button key={w.toISOString()} className={selectedWeekStart && selectedWeekStart.toISOString() === w.toISOString() ? 'week active' : 'week'} onClick={()=>setSelectedWeekStart(w)}>
-                      {weekLabel(w)}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-        </div>
-      </header>
+      {/* header moved to a separate component to keep JSX in .jsx for Vitest */}
+      <CalendarHeader
+        months={months.map(m=>m)}
+        selectedMonth={selectedMonth}
+        setSelectedMonth={setSelectedMonth}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        weeks={weeks}
+        selectedWeekStart={selectedWeekStart}
+        setSelectedWeekStart={setSelectedWeekStart}
+      />
 
       <main className="main-grid">
         <section className="left">

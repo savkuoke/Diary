@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "1770416280713",
+    "date": "2026-02-13",
+    "weight": "80",
+    "steps": "4000",
+    "mood": "some mood",
+    "notes": "I dunno"
+  },
+  {
+    "id": "1770416227261",
+    "date": "2026-02-07",
+    "weight": "70",
+    "steps": "5000",
+    "mood": "ok",
+    "notes": "smoke test"
+  }
+]
