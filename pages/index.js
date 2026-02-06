@@ -32,14 +32,34 @@ export default function Home() {
   // derive months from entries
   const months = useMemo(() => {
     const set = new Set()
+    let earliest = null
+    let latest = null
+
     entries.forEach((e) => {
       try {
         const d = new Date(e.date)
-        if (!isNaN(d)) set.add(formatMonthKey(d))
+        if (!isNaN(d)) {
+          const key = formatMonthKey(d)
+          set.add(key)
+          if (!earliest || d < earliest) earliest = new Date(d)
+          if (!latest || d > latest) latest = new Date(d)
+        }
       } catch (err) {}
     })
+
     // always include current month
-    set.add(formatMonthKey(new Date()))
+    const now = new Date()
+    set.add(formatMonthKey(now))
+    if (!earliest || now < earliest) earliest = new Date(now)
+    if (!latest || now > latest) latest = new Date(now)
+
+    // expand range by 12 months backward and forward so user can navigate beyond existing entries
+    const start = new Date(earliest.getFullYear(), earliest.getMonth() - 12, 1)
+    const end = new Date(latest.getFullYear(), latest.getMonth() + 12, 1)
+    for (let d = new Date(start); d <= end; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) {
+      set.add(formatMonthKey(d))
+    }
+
     return Array.from(set).sort().reverse()
   }, [entries])
 
