@@ -92,8 +92,20 @@ export default function Home() {
     return out
   }, [selectedMonth])
 
-  const [selectedWeekStart, setSelectedWeekStart] = useState(null)
-  useEffect(() => { if (weeks.length) setSelectedWeekStart(weeks[0]) }, [weeks])
+  // default to the start of the current week so the week view shows "this week"
+  const [selectedWeekStart, setSelectedWeekStart] = useState(() => startOfWeek(new Date()))
+  useEffect(() => {
+    if (!weeks.length) return
+    // prefer the current week if it's part of the computed weeks for the selected month
+    const currentWeekKey = startOfWeek(new Date()).toISOString()
+    const found = weeks.find(w => w.toISOString() === currentWeekKey)
+    if (found) {
+      setSelectedWeekStart(found)
+      return
+    }
+    // only set to the first week if there is no selected week yet
+    if (!selectedWeekStart) setSelectedWeekStart(weeks[0])
+  }, [weeks])
 
   // group entries by week start
   const entriesByWeek = useMemo(() => {
