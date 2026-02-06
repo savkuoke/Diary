@@ -106,6 +106,21 @@ export default function Home() {
     return map
   }, [entries])
 
+  // map entries by date key YYYY-MM-DD for month grid markers
+  const entriesByDate = useMemo(() => {
+    const map = new Map()
+    entries.forEach(e => {
+      const d = new Date(e.date)
+      if (isNaN(d)) return
+      const key = d.toISOString().slice(0,10)
+      if (!map.has(key)) map.set(key, [])
+      map.get(key).push(e)
+    })
+    return map
+  }, [entries])
+
+  const [viewMode, setViewMode] = useState('week') // 'week' or 'month'
+
   return (
     <div className="container">
       <header className="header">
@@ -125,13 +140,21 @@ export default function Home() {
             }}>{'▶'}</button>
           </div>
 
-          <div className="week-list">
-            {weeks.map(w => (
-              <button key={w.toISOString()} className={selectedWeekStart && selectedWeekStart.toISOString() === w.toISOString() ? 'week active' : 'week'} onClick={()=>setSelectedWeekStart(w)}>
-                {weekLabel(w)}
-              </button>
-            ))}
-          </div>
+          <div className="week-list" style={{alignItems:'center'}}>
+              <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                <button className={viewMode==='week'?'btn tiny primary':'btn tiny'} onClick={()=>setViewMode('week')}>Week</button>
+                <button className={viewMode==='month'?'btn tiny primary':'btn tiny'} onClick={()=>setViewMode('month')}>Month</button>
+              </div>
+              {viewMode === 'week' && (
+                <div style={{display:'flex', gap:8, overflow:'auto'}}>
+                  {weeks.map(w => (
+                    <button key={w.toISOString()} className={selectedWeekStart && selectedWeekStart.toISOString() === w.toISOString() ? 'week active' : 'week'} onClick={()=>setSelectedWeekStart(w)}>
+                      {weekLabel(w)}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
         </div>
       </header>
 
@@ -151,31 +174,66 @@ export default function Home() {
         </section>
 
         <section className="right">
-          <h2>Week markings</h2>
-          <div className="entries-grid">
-            {selectedWeekStart ? (
-              (entriesByWeek.get(selectedWeekStart.toISOString()) || []).length ? (
-                (entriesByWeek.get(selectedWeekStart.toISOString()) || []).map(entry => (
-                  <article key={entry.id} className="entry-card card">
-                    <div className="entry-header">
-                      <strong>{entry.date}</strong>
-                      <button className="btn tiny" onClick={()=>deleteEntry(entry.id)}>Delete</button>
-                    </div>
-                    <div className="entry-body">
-                      <div className="stat">Weight: <strong>{entry.weight || '—'}</strong> kg</div>
-                      <div className="stat">Steps: <strong>{entry.steps || '—'}</strong></div>
-                      <div className="stat">Mood: <em>{entry.mood || '—'}</em></div>
-                      <p className="notes">{entry.notes}</p>
-                    </div>
-                  </article>
-                ))
+          <h2>{viewMode === 'week' ? 'Week markings' : 'Month view'}</h2>
+          {viewMode === 'week' ? (
+            <div className="entries-grid">
+              {selectedWeekStart ? (
+                (entriesByWeek.get(selectedWeekStart.toISOString()) || []).length ? (
+                  (entriesByWeek.get(selectedWeekStart.toISOString()) || []).map(entry => (
+                    <article key={entry.id} className="entry-card card">
+                      <div className="entry-header">
+                        <strong>{entry.date}</strong>
+                        <button className="btn tiny" onClick={()=>deleteEntry(entry.id)}>Delete</button>
+                      </div>
+                      <div className="entry-body">
+                        <div className="stat">Weight: <strong>{entry.weight || '—'}</strong> kg</div>
+                        <div className="stat">Steps: <strong>{entry.steps || '—'}</strong></div>
+                        <div className="stat">Mood: <em>{entry.mood || '—'}</em></div>
+                        <p className="notes">{entry.notes}</p>
+                      </div>
+                    </article>
+                  ))
+                ) : (
+                  <div className="card empty">No entries for this week</div>
+                )
               ) : (
-                <div className="card empty">No entries for this week</div>
-              )
-            ) : (
-              <div className="card empty">Select a week</div>
-            )}
-          </div>
+                <div className="card empty">Select a week</div>
+              )}
+            </div>
+          ) : (
+            <div className="card month-card">
+              <div className="month-grid">
+                <div className="weekday-headers">
+                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => <div key={d} className="weekday">{d}</div>)}
+                </div>
+                <div className="days-grid">
+                  {(() => {
+                    const [y, m] = selectedMonth.split('-').map(Number)
+                    const first = new Date(y, m - 1, 1)
+                    const last = new Date(y, m, 0)
+                    let start = startOfWeek(first)
+                    const cells = []
+                    while (start <= addDays(last, 6)) {
+                      const key = start.toISOString().slice(0,10)
+                      const inMonth = start.getMonth() === (m - 1)
+                      const entriesForDay = entriesByDate.get(key) || []
+                      cells.push(
+                        <div key={key} className={"day-cell" + (inMonth ? '' : ' muted') } onClick={()=>{ setSelectedWeekStart(startOfWeek(start)); setViewMode('week') }}>
+                          <div className="day-number">{start.getDate()}</div>
+                          <div className="markers">
+                            {entriesForDay.slice(0,3).map((en, i) => <span key={i} className="marker" title={en.notes || en.mood}></span>)}
+                            {entriesForDay.length > 3 && <span className="more">+{entriesForDay.length - 3}</span>}
+                          </div>
+                        </div>
+                      )
+                      start = addDays(start,1)
+                    }
+                    return cells
+                  })()}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       </main>
     </div>
