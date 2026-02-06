@@ -10,9 +10,24 @@ export default function Home() {
 
   // Form state
   const [form, setForm] = useState({ date: '', weight: '', steps: '', mood: '', notes: '' })
+  const [editingId, setEditingId] = useState(null)
 
   async function addEntry(e) {
     e.preventDefault()
+    if (editingId) {
+      const res = await fetch(`/api/entries?id=${editingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (res.ok) {
+        setForm({ date: '', weight: '', steps: '', mood: '', notes: '' })
+        setEditingId(null)
+        mutate()
+      }
+      return
+    }
+
     const res = await fetch('/api/entries', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -166,7 +181,8 @@ export default function Home() {
             <input type="text" placeholder="mood" value={form.mood} onChange={(e)=>setForm({...form, mood:e.target.value})} />
             <textarea placeholder="notes" value={form.notes} onChange={(e)=>setForm({...form, notes:e.target.value})} />
             <div style={{display:'flex', gap:8}}>
-              <button className="btn primary" type="submit">Add</button>
+              <button className="btn primary" type="submit">{editingId ? 'Save' : 'Add'}</button>
+              {editingId && <button type="button" className="btn" onClick={() => { setEditingId(null); setForm({ date: '', weight: '', steps: '', mood: '', notes: '' }) }}>Cancel</button>}
             </div>
           </form>
         </section>
@@ -182,9 +198,16 @@ export default function Home() {
                   (entriesByWeek.get(selectedWeekStart.toISOString()) || []).map(entry => (
                     <article key={entry.id} className="entry-card card">
                       <div className="entry-header">
-                        <strong>{entry.date}</strong>
-                        <button className="btn tiny" onClick={()=>deleteEntry(entry.id)}>Delete</button>
-                      </div>
+                          <strong>{entry.date}</strong>
+                          <div style={{display:'flex', gap:8}}>
+                            <button className="btn tiny" onClick={()=>{ deleteEntry(entry.id) }}>Delete</button>
+                            <button className="btn tiny" onClick={()=>{
+                              // populate form for editing
+                              setForm({ date: entry.date, weight: entry.weight || '', steps: entry.steps || '', mood: entry.mood || '', notes: entry.notes || '' })
+                              setEditingId(entry.id)
+                            }}>Edit</button>
+                          </div>
+                        </div>
                       <div className="entry-body">
                         <div className="stat">Weight: <strong>{entry.weight || '—'}</strong> kg</div>
                         <div className="stat">Steps: <strong>{entry.steps || '—'}</strong></div>
