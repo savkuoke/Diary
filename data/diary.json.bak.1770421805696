@@ -1,0 +1,66 @@
+[
+  {
+    "id": "1770416280713",
+    "date": "2026-02-13",
+    "weight": "80",
+    "steps": "4000",
+    "mood": "some mood",
+    "notes": "I dunno"
+  },
+  {
+    "id": "1770416227261",
+    "date": "2026-02-07",
+    "weight": "70",
+    "steps": "5000",
+    "mood": "ok",
+    "notes": "smoke test"
+  },
+  {
+    "id": "1770416000001",
+    "date": "2026-01-26",
+    "weight": "72",
+    "steps": "3000",
+    "mood": "fine",
+    "notes": "last week start"
+  },
+  {
+    "id": "1770416000002",
+    "date": "2026-01-28",
+    "weight": "71",
+    "steps": "4500",
+    "mood": "good",
+    "notes": "mid last week"
+  },
+  {
+    "id": "1770416000003",
+    "date": "2026-02-02",
+    "weight": "70",
+    "steps": "7000",
+    "mood": "energetic and fine",
+    "notes": "this week start"
+  },
+  {
+    "id": "1770416000004",
+    "date": "2026-02-03",
+    "weight": "70",
+    "steps": "8000",
+    "mood": "good",
+    "notes": "wednesday"
+  },
+  {
+    "id": "1770416000005",
+    "date": "2026-02-05",
+    "weight": "69",
+    "steps": "6000",
+    "mood": "ok",
+    "notes": "friday"
+  },
+  {
+    "id": "1770416000006",
+    "date": "2026-02-06",
+    "weight": "69",
+    "steps": "10000",
+    "mood": "great",
+    "notes": "saturday"
+  }
+]
